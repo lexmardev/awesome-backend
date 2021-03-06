@@ -13,6 +13,19 @@ const sign = (payload = {}) => {
   });
 };
 
+const verify = (token) => {
+  return new Promise((resolve, reject) => {
+    jwt.verify(token, env.TOKEN.SECRET_KEY, (error, decoded) => {
+      if (error) {
+        reject(error);
+      }
+
+      resolve(decoded);
+    });
+  });
+};
+
 module.exports = {
   sign,
+  verify,
 };

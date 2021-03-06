@@ -9,6 +9,10 @@ const verifyError = (error) => {
     };
   }
 
+  if (error.message.includes('Cast to ObjectId failed for value')) {
+    return { status: 400, code: 404, message: 'Invalid identifier' };
+  }
+
   if (error.message.includes('Data could not be encrypted') || error.message.includes('Data could not be compared')) {
     return { status: 500, code: 502, message: internalError };
   }

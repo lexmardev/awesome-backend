@@ -10,6 +10,7 @@ const userSchema = require('../core/schemas/user.schema');
 
 const { pick } = require('lodash');
 const { Router } = require('express');
+
 const router = Router();
 
 router.post(
@@ -46,7 +47,7 @@ router.post(
 
     if (result) {
       if (await bcrypt.compare(user.password, result.password)) {
-        const token = await jwt.sign({ payload: result._id });
+        const token = await jwt.sign({ payload: { _id: result._id } });
         return response.request(200, 'User logged in successfully', { token }, res);
       }
     }
