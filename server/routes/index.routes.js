@@ -1,4 +1,6 @@
 const setRoutes = (app) => {
+  app.use(require('./user.routes'));
+
   // Middleware para rutas inválidas
   app.use((req, res) => {
     return res.status(404).json({
