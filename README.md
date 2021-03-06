@@ -24,6 +24,12 @@ Para iniciar la aplicacion ejecuta el comando.
 npm run dev
 ```
 
+Ruta de escucha del servidor
+
+```
+localhost:3000/api/login
+```
+
 **Integración con sendgrid exitosa usa un correo real en el endpoint register para verificar su funcionamiento.**
 
 # Endpoints
