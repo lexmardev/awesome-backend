@@ -3,3 +3,6 @@ node_modules/
 
 # Ignoring vscode settings
 .vscode/
+
+# Ignoring upload folder
+uploads/

@@ -3,16 +3,15 @@ const schemaHandler = require('../core/handlers/schema.handler');
 const response = require('../core/helpers/response.helper');
 
 const auth = require('../middlewares/auth.middleware');
+const upload = require('../middlewares/multer.middleware');
 
 const Property = require('../models/property.model');
 const propertySchema = require('../core/schemas/property.schema');
 
 const { pick } = require('lodash');
 const { Router } = require('express');
-const multer = require('multer');
 
 const router = Router();
-const upload = multer({ dest: 'uploads/' });
 
 const getBody = (body) => {
   return pick(body, [
@@ -32,6 +31,49 @@ const getBody = (body) => {
     'user',
   ]);
 };
+
+router.post(
+  '/upload/photos/:_id',
+  auth.authorization,
+  schemaHandler.validate(propertySchema.UPLOAD),
+  upload.images,
+  errorHandler.handleRequest(async (req, res) => {
+    const pathImages = [];
+    req.files.forEach((file) => {
+      const pathImage = file.destination + file.filename;
+      pathImages.push(pathImage);
+    });
+
+    const _id = req.params._id;
+
+    const result = await Property.findByIdAndUpdate(_id, { optionalImages: pathImages });
+
+    if (result) {
+      return response.request(200, 'Image added successfully', {}, res);
+    }
+
+    return response.notFound(res, 'Property not found');
+  })
+);
+
+router.post(
+  '/upload/photo/:_id',
+  auth.authorization,
+  schemaHandler.validate(propertySchema.UPLOAD),
+  upload.image,
+  errorHandler.handleRequest(async (req, res) => {
+    const pathImage = req.file.destination + req.file.filename;
+    const _id = req.params._id;
+
+    const result = await Property.findByIdAndUpdate(_id, { primaryImage: pathImage });
+
+    if (result) {
+      return response.request(200, 'Image added successfully', {}, res);
+    }
+
+    return response.notFound(res, 'Property not found');
+  })
+);
 
 router.post(
   '/',
@@ -55,7 +97,11 @@ router.put(
 
     const result = await Property.findByIdAndUpdate(req.params._id, property);
 
-    return response.request(201, 'Property updated successfully', { _id: result._id }, res);
+    if (result) {
+      return response.request(201, 'Property updated successfully', { _id: result._id }, res);
+    }
+
+    return response.notFound(res, 'Property not found');
   })
 );
 
@@ -76,9 +122,13 @@ router.delete(
   errorHandler.handleRequest(async (req, res) => {
     const _id = req.params._id;
 
-    await Property.findByIdAndDelete(_id);
+    const result = await Property.findByIdAndDelete(_id);
 
-    return response.request(200, 'Property deleted successfully', {}, res);
+    if (result) {
+      return response.request(200, 'Property deleted successfully', {}, res);
+    }
+
+    return response.notFound(res, 'Property not found');
   })
 );
 

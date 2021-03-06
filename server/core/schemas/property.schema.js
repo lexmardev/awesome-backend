@@ -44,6 +44,11 @@ const propertySchema = {
       _id: joi.string().required(),
     }),
   },
+  UPLOAD: {
+    params: joi.object().keys({
+      _id: joi.string().required(),
+    }),
+  },
 };
 
 module.exports = propertySchema;

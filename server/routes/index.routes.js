@@ -1,6 +1,7 @@
 const setRoutes = (app) => {
   app.use(require('./user.routes'));
   app.use('/api/properties', require('./property.routes'));
+  app.use('/api/images', require('./image.routes'));
 
   // Middleware para rutas inválidas
   app.use((req, res) => {
